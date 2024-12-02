@@ -4,6 +4,8 @@
 ### Условие
 Разработать программу, заменяющую все гласные буквы в заданной ASCII–строке их ASCII кодами в шестнадцатиричной системе счисления. Код каждого символа задавать в формате«0xDD», где D — шестнадцатиричная цифра от 0 до F.
 
+Приведены решения на 8 баллов и 10 баллов. Требования на 9 баллов учтены в решении на 10. На гитхабе лежат решения на 10 баллов.
+
 ## Решение на 8 баллов
 ### Концепция решения:
 В main.asm происходит открытие файлов, их считывание по чанкам в 512 байт и вывод результата. В решении уже присутсвует опция вывода в консоль на основе выбора пользователя. Для замены гласной буквы на ее HEX код используется несколько функций: process_string, is_vowel, format_hex. Строки сохраняются в куче. 
@@ -817,7 +819,7 @@ error_size:
 Результаты запуска можно найти в папке **tests** в файлах **test_X_out.txt**, где X - число от 1 до 7.
 <img width="1840" alt="Screenshot 2024-12-02 at 11 42 17" src="https://github.com/user-attachments/assets/5ec51948-32e2-4798-b75e-e26f1c54b427">
 
-## Решение на 9 баллов
+## Решение на 10 баллов
 Файл: **main.asm**
 ```
 .include "macro_syscalls.asm"
@@ -1632,8 +1634,162 @@ error_read:
     print_str("Ошибка чтения файла\n")
     exit
 ```
+Файл: **test.asm**
+```
+.include "macro_syscalls.asm"
+.include "funcs.asm"
+
+.data
+    folder_path:   .space 256 
+    test_files:    .string "tests/test_1.txt\0tests/test_2.txt\0tests/test_3.txt\0tests/test_4.txt\0tests/test_5.txt\0tests/test_6.txt\0tests/test_7.txt\0"
+    test_count:    .word 7
+    test_out_suffix: .string "_out.txt\0"
+
+.text
+.globl main
+main:
+    # Ввод пути до папки
+    print_str("Введите путь до папки: ")
+    str_get(folder_path, NAME_SIZE)
+
+    # Вызываем тестовую программу
+    jal test_program
+    
+    # Завершаем программу
+    exit
+
+.globl test_program
+test_program:
+    push(ra)
+    
+    lw s0, test_count
+    la s1, test_files
+    
+test_loop:
+    beqz s0, test_done
+    # Выводим имя тестируемого файла
+    print_str("Тестирование файла: ")
+    print_str_reg(s1)
+    newline
+    
+    la a0, in
+    la a1, folder_path
+    mv a2, s1
+    jal create_full_path
+    
+    # Отладочный вывод входного файла
+    print_str("Входной файл: ")
+    print_str_addr(in)
+    newline
+    
+    # Создаем полный путь к выходному файлу
+    la a0, out
+    la a1, folder_path
+    mv a2, s1
+    jal create_output_name
+    
+    # Отладочный вывод выходного файла
+    print_str("Выходной файл: ")
+    print_str_addr(out)
+    newline
+    
+    # Обрабатываем файлы
+    jal process
+    
+    # Следующий тест
+    addi s0, s0, -1
+    find_next:
+        lb s2, (s1)
+        addi s1, s1, 1
+        bnez s2, find_next
+    
+    j test_loop
+
+test_done:
+    pop(ra)
+    ret
+
+# Создание полного пути к файлу
+create_full_path:
+    push(ra)
+    push(t0)
+    push(t1)
+    
+    # Копируем путь к папке
+    mv t0, a0        # destination
+    mv t1, a1        # source
+    
+path_loop:
+    lb t2, (t1)
+    beqz t2, add_slash
+    sb t2, (t0)
+    addi t0, t0, 1
+    addi t1, t1, 1
+    j path_loop
+
+add_slash:
+    li t2, '/'
+    sb t2, (t0)
+    addi t0, t0, 1
+
+    # Копируем имя файла
+    mv t1, a2
+file_loop:
+    lb t2, (t1)
+    sb t2, (t0)
+    beqz t2, full_path_done
+    addi t0, t0, 1
+    addi t1, t1, 1
+    j file_loop
+
+full_path_done:
+    pop(t1)
+    pop(t0)
+    pop(ra)
+    ret
+
+# Создание имени выходного файла (добавляем _out.txt)
+create_output_name:
+    push(ra)
+    push(t0)
+    push(t1)
+    push(t2)
+    
+    # Создаем полный путь к файлу
+    jal create_full_path
+    
+    # Убираем расширение и добавляем _out.txt
+    addi t0, a0, 0
+base_name_loop:
+    lb t2, (t0)
+    beqz t2, add_suffix
+    li t3, '.'
+    beq t2, t3, add_suffix
+    addi t0, t0, 1
+    j base_name_loop
+
+add_suffix:
+    # Добавляем _out.txt
+    la t1, test_out_suffix
+suffix_loop:
+    lb t2, (t1)
+    sb t2, (t0)
+    beqz t2, create_name_done
+    addi t0, t0, 1
+    addi t1, t1, 1
+    j suffix_loop
+    
+create_name_done:
+    pop(t2)
+    pop(t1)
+    pop(t0)
+    pop(ra)
+    ret
+
+```
 
 ### Изменения 
 В макросы добавленны функции read_file, write_file, processing, console_print.
 В основную программу и в программу с функциями(funcs) заменены обычные вызовы на макросы.
 Изменений в файле test.asm нет, ибо вся логика вызовов обрабатывающих файлы и строки функции находятся в funcs.asm 
+Сделана многофайловая сборка программы(в main.asm вызывается библиотека макросов), в test.asm вызывается и модуль funcs, и модуль макросов.
