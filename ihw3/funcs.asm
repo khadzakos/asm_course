@@ -298,6 +298,3 @@ error_open:
 error_read:
     print_str("Ошибка чтения файла\n")
     exit
-error_size:
-    print_str("Размер файла превышает 10 кб\n")
-    exit
