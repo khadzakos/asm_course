@@ -312,8 +312,8 @@ error_read:
     print_str("Ошибка чтения файла\n")
     exit
 ```
-### Запус программы
-![Uploading Screenshot 2024-12-01 at 13.38.18.png…]()
+### Запуск программы
+<img width="1796" alt="Screenshot 2024-12-02 at 11 14 01" src="https://github.com/user-attachments/assets/581aeb70-ed07-4cff-b391-f2756a21ed8e">
 
 ### Тестирование 
 Все тесты можно найти в папке **tests**.
