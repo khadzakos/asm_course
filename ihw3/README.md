@@ -1789,6 +1789,13 @@ create_name_done:
 
 ```
 
+### Результат запуска
+Для main.asm
+<img width="1840" alt="Screenshot 2024-12-02 at 15 01 13" src="https://github.com/user-attachments/assets/6dcb3e9d-ff32-475c-b11f-d24e0c1ba307">
+
+Для tests.asm
+<img width="1840" alt="Screenshot 2024-12-02 at 15 02 46" src="https://github.com/user-attachments/assets/108faa7d-e5ee-40d6-ba69-bf06376cceb9">
+
 ### Изменения 
 В макросы добавленны функции read_file, write_file, processing, console_print.
 В основную программу и в программу с функциями(funcs) заменены обычные вызовы на макросы.
