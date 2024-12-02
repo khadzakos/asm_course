@@ -17,28 +17,20 @@ main:
     # Ввод имени входного файла
     print_str("Введите путь до файла со входными данными: ")
     str_get(in, NAME_SIZE)
-    
+     
     # Открытие файла для чтения
     open(in, READ_ONLY)
     bltz a0, error_open
     mv s5, a0  # Сохранение дескриптора файла
      
     # Чтение файла
-    mv a0, s5
-    jal read_input
-    mv s0, a0
-    mv s1, a1
+    read_file(s5, s0, s1)
     
     # Обработка строки
-    mv a0, s0
-    mv a1, s1
-    jal process_string
-    mv s2, a0
-    mv s3, a1
+    processing(s0, s1, s2, s3)
     
     # Проверка вывода на консоль
-    mv a0, s2
-    jal check_console_output
+    console_print(s2)
     
     # Ввод имени выходного файла
     print_str("Введите путь до файла с выходными данными: ")
@@ -50,10 +42,7 @@ main:
     mv s6, a0
     
     # Запись в выходной файл
-    mv a0, s2
-    mv a1, s3
-    mv a2, s6
-    jal write_output
+    write_file(s2, s3, s6)
     
     # Закрытие файлов
     close(s5)
@@ -301,7 +290,4 @@ error_open:
     exit
 error_read:
     print_str("Ошибка чтения файла\n")
-    exit
-error_size:
-    print_str("Размер файла превышает 10 кб\n")
     exit
