@@ -48,7 +48,7 @@ void read_data(std::vector<int>& data) {
             std::cin >> n;
             data.resize(n);
             for (int i = 0; i < n; i++) {
-                data[i] = rand() % 100;
+                data[i] = rand() % 10000;
             }
 
             std::cout << "Cгенерированные данные: ";
