@@ -132,7 +132,7 @@ int main() {
             pthread_create(&thread, NULL, [](void* arg) -> void* {
                 ThreadData* data = (ThreadData*) arg;
                 data->db->read(data->thread_id);
-                usleep(500000);
+//                usleep(500000);
                 return NULL;
             }, new ThreadData{&db, static_cast<int>(readers.size())}); // Создаем поток читателя
 
@@ -143,7 +143,7 @@ int main() {
             pthread_create(&thread, NULL, [](void* arg) -> void* {
                 ThreadData* data = (ThreadData*) arg;
                 data->db->write(data->thread_id);
-                usleep(500000);
+//                usleep(500000);
                 return NULL;
             }, new ThreadData{&db, static_cast<int>(writers.size())});
 
