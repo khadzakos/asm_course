@@ -22,23 +22,6 @@ public:
         writers = 0;
     }
 
-    Database(int size) {
-        rnd.seed(std::chrono::system_clock::now().time_since_epoch().count());
-
-        data.resize(size);
-        for (int& i : data) {
-            i = rnd() % 100;
-        }
-        std::sort(data.begin(), data.end());
-
-        pthread_mutex_init(&mutex, NULL);
-        pthread_cond_init(&read_cond, NULL);
-        pthread_cond_init(&write_cond, NULL);
-
-        readers = 0;
-        writers = 0;
-    }
-
     ~Database() {
         pthread_mutex_destroy(&mutex);
         pthread_cond_destroy(&read_cond);

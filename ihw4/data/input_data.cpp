@@ -7,7 +7,8 @@ void read_data(std::vector<int>& data) {
         std::cout << "Введите цифру: \n"
                   << "1. Ввод данных из консоли\n"
                   << "2. Ввод данных из файла\n"
-                  << "3. Выйти\n";
+                  << "3. Cлучайные данные\n"
+                  << "4. Выйти\n";
         int choice;
         std::cin >> choice;
         if (choice == 1) {
@@ -42,6 +43,23 @@ void read_data(std::vector<int>& data) {
 
             break;
         } else if (choice == 3) {
+            std::cout << "Введите количество чисел: ";
+            int n;
+            std::cin >> n;
+            data.resize(n);
+            for (int i = 0; i < n; i++) {
+                data[i] = rand() % 100;
+            }
+
+            std::cout << "Cгенерированные данные: ";
+            for (int i = 0; i < n; i++) {
+                std::cout << data[i] << " ";
+            }
+            std::cout << std::endl;
+
+            std::cout << "Данные успешно загружены\n";
+            break;
+        } else if (choice == 4) {
             break;
         } else {
             std::cout << "Неверный ввод\n";
